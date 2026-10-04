@@ -1,18 +1,30 @@
 import os
 import sys
 import argparse
+import threading
+import webbrowser
 from app import create_app
 from app.config import Config
 
 app = create_app(os.getenv("FLASK_ENV", "development"))
+
+def open_browser(url, delay=1.5):
+    """Open the default browser after a short delay to let Flask start first."""
+    def _open():
+        import time
+        time.sleep(delay)
+        webbrowser.open(url)
+    thread = threading.Thread(target=_open, daemon=True)
+    thread.start()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sales Performance Analytics Dashboard")
     parser.add_argument("--host", default="127.0.0.1", help="Host interface to bind to")
     parser.add_argument("--port", type=int, default=5000, help="Port to listen on")
     parser.add_argument("--debug", action="store_true", default=True, help="Enable Flask debug mode")
+    parser.add_argument("--no-browser", action="store_true", help="Do not auto-open the browser")
     parser.add_argument("--seed", action="store_true", help="Generate 50,000 synthetic records on startup")
-    
+
     args = parser.parse_args()
 
     if args.seed:
@@ -23,8 +35,15 @@ if __name__ == "__main__":
 
     port = int(os.getenv("PORT", args.port))
     host = os.getenv("HOST", args.host)
-    print(f"\n[STARTING] Sales Performance Analytics Dashboard at http://{host}:{port}")
+    url = f"http://{host}:{port}"
+
+    print(f"\n[STARTING] Sales Performance Analytics Dashboard at {url}")
     print(f"[DATABASE] Engine: {Config.DB_ENGINE.upper()} (Fallback to SQLite: {Config.ALLOW_SQLITE_FALLBACK})")
     print(f"[PATH] Base Directory: {Config.BASE_DIR}\n")
+
+    # Auto-open browser (skip in debug reloader subprocess to avoid double-opening)
+    if not args.no_browser and os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        print(f"[BROWSER] Opening dashboard in your browser automatically...")
+        open_browser(url)
 
     app.run(host=host, port=port, debug=args.debug)
