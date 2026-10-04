@@ -1,0 +1,49 @@
+<header class="top-navbar">
+    <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-sm btn-outline-secondary d-lg-none" type="button" id="sidebar-toggle">
+            <i class="bi bi-list fs-5"></i>
+        </button>
+        <div class="navbar-page-title">
+            <h2>{{ page_title or 'Sales Analytics' }}</h2>
+            <p>Enterprise Portfolio Dashboard • 50,000+ Transactions Benchmark</p>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        {% if 'SQLite' in db_status.engine_type %}
+        <span class="badge bg-light text-primary border d-none d-md-inline-flex align-items-center py-2 px-3" data-bs-toggle="tooltip" title="Operating with full CTE and Window Function support. Can connect to MySQL via .env">
+            <i class="bi bi-info-circle-fill text-primary me-2"></i>Local Mode (SQLite 3.25+)
+        </span>
+        {% else %}
+        <span class="badge bg-success-subtle text-success border border-success-subtle d-none d-md-inline-flex align-items-center py-2 px-3">
+            <i class="bi bi-check-circle-fill text-success me-2"></i>MySQL 8.0 Connected
+        </span>
+        {% endif %}
+
+        <!-- Quick Export Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-download"></i>
+                <span class="d-none d-sm-inline">Export Reports</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                <li>
+                    <a class="dropdown-item py-2" href="#" id="btn-export-excel">
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>Excel Workbook (.xlsx)
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item py-2" href="#" id="btn-export-csv">
+                        <i class="bi bi-file-earmark-text text-primary me-2"></i>Filtered CSV Dataset
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item py-2" href="javascript:window.print()">
+                        <i class="bi bi-printer text-secondary me-2"></i>Print / Save as PDF
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Presets Sidebar -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-collection text-primary me-2"></i>Curated SQL Analytics Library</h5>
+                <small class="text-muted">Production queries with CTEs, Window functions, & Joins</small>
+            </div>
+            <div class="list-group list-group-flush" id="sql-presets-list" style="max-height: 680px; overflow-y: auto;">
+                <div class="p-4 text-center text-muted">
+                    <span class="spinner-border spinner-border-sm me-2"></span>Loading SQL queries...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SQL Editor & Execution Engine -->
+    <div class="col-xl-8 col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark" id="active-query-title">Query Console</h5>
+                    <small class="text-muted" id="active-query-desc">Select a preset from the left or write your analytical SQL query</small>
+                </div>
+                <button class="btn btn-primary px-3 py-2 fw-semibold d-flex align-items-center gap-2" id="btn-run-sql">
+                    <i class="bi bi-play-fill fs-5"></i> Execute SQL
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <textarea class="form-control font-monospace border-0 p-3" id="sql-editor-input" rows="11" 
+                          style="background-color: #0f172a; color: #38bdf8; font-size: 0.88rem; line-height: 1.6; resize: vertical;" spellcheck="false"></textarea>
+            </div>
+            <div class="card-footer bg-light py-2 px-3 d-flex justify-content-between align-items-center small text-muted">
+                <span><i class="bi bi-shield-lock-fill text-success me-1"></i>Read-Only Sandbox (SELECT / WITH only)</span>
+                <span class="font-monospace">MySQL 8.0+ & SQLite 3.25+ Compatible</span>
+            </div>
+        </div>
+
+        <!-- Query Execution Results -->
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-table text-teal me-2"></i>Execution Results</h5>
+                    <div id="sql-execution-meta"></div>
+                </div>
+                <span class="badge bg-light text-secondary border">Auto-Formatted Columns</span>
+            </div>
+            
+            <div id="sql-error-alert" class="alert alert-danger m-3 d-none" role="alert"></div>
+
+            <div class="card-body p-0" id="sql-results-container">
+                <div class="p-5 text-center text-muted">
+                    <i class="bi bi-database fs-1 opacity-50 mb-2"></i>
+                    <p class="mb-0">Click "Execute SQL" above to run the selected analytical query.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/sql_analytics.js') }}"></script>
+{% endblock %}

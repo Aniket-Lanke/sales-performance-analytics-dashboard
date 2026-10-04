@@ -1,0 +1,483 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <!-- Quick Nav Table of Contents -->
+    <div class="col-xl-3 col-lg-4 d-none d-lg-block">
+        <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 80px; z-index: 1000;">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-list-nested text-primary me-2"></i>Documentation Index</h6>
+            </div>
+            <div class="list-group list-group-flush small">
+                <a href="#doc-overview" class="list-group-item list-group-item-action py-2">1. System Overview & Portfolio Value</a>
+                <a href="#doc-architecture" class="list-group-item list-group-item-action py-2">2. Technical Architecture & Stack</a>
+                <a href="#doc-database" class="list-group-item list-group-item-action py-2">3. Relational Schema & ERD</a>
+                <a href="#doc-kpi" class="list-group-item list-group-item-action py-2">4. KPI Mathematical Formulations</a>
+                <a href="#doc-segmentation" class="list-group-item list-group-item-action py-2">5. Customer Segmentation Logic</a>
+                <a href="#doc-cleaning" class="list-group-item list-group-item-action py-2">6. Data Quality & Cleaning Pipeline</a>
+                <a href="#doc-sql" class="list-group-item list-group-item-action py-2">7. Advanced SQL Design (CTEs & Windows)</a>
+                <a href="#doc-api" class="list-group-item list-group-item-action py-2">8. REST API Reference</a>
+                <a href="#doc-setup" class="list-group-item list-group-item-action py-2">9. Setup & Local Execution Guide</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Documentation Body -->
+    <div class="col-xl-9 col-lg-8 col-12">
+        <!-- 1. System Overview -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-overview">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1">Portfolio Project</span>
+                    <span class="text-muted small">Designed for Senior Data Analyst & Analytics Engineer roles</span>
+                </div>
+                <h3 class="fw-bold text-dark mb-3">Sales Performance Analytics Platform</h3>
+                <p class="text-secondary leading-relaxed">
+                    This end-to-end sales analytics web application models enterprise commercial operations across <strong>50,000+ transaction records</strong>. It provides executive stakeholders with real-time insight into revenue trajectories, regional performance, product margin health, customer lifetime value segmentation, and year-over-year seasonality.
+                </p>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 text-center">
+                            <i class="bi bi-database-check fs-3 text-primary mb-2"></i>
+                            <h6 class="fw-bold mb-1">50,000+ Records</h6>
+                            <small class="text-muted">Enterprise scale benchmark</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 text-center">
+                            <i class="bi bi-shield-check fs-3 text-success mb-2"></i>
+                            <h6 class="fw-bold mb-1">Zero Silent Drops</h6>
+                            <small class="text-muted">Strict validation & audit trail</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 text-center">
+                            <i class="bi bi-lightning-charge fs-3 text-warning mb-2"></i>
+                            <h6 class="fw-bold mb-1">Sub-second Latency</h6>
+                            <small class="text-muted">Optimized SQL index execution</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Technical Architecture -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-architecture">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-diagram-3 text-primary me-2"></i>Technical Architecture & Technology Stack</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered table-custom">
+                        <thead class="bg-light">
+                            <tr>
+                                <th style="width: 25%;">Layer</th>
+                                <th style="width: 35%;">Technology</th>
+                                <th>Role & Architectural Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Backend & API</td>
+                                <td>Python 3.12, Flask 3.0</td>
+                                <td>Lightweight, asynchronous-ready WSGI service structured into modular blueprints (<code>main</code>, <code>api</code>, <code>data</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Data Transformation</td>
+                                <td>Pandas 2.3, NumPy 2.2</td>
+                                <td>Column standardization, duplicate flagging, date normalization, imputation, and outlier detection.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Database & ORM</td>
+                                <td>MySQL 8.0, SQLAlchemy 2.0, PyMySQL</td>
+                                <td>Normalized 3NF relational schema with B-Tree indexes, CTEs, Window functions, and automatic SQLite 3.25+ fallback for zero-setup demoing.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Interactive Charts</td>
+                                <td>Plotly.js (v2.30)</td>
+                                <td>Client-side canvas rendering of dual-axis sales trajectories, donut market share charts, and horizontal ranking bars.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Frontend UI</td>
+                                <td>Bootstrap 5.3, Bootstrap Icons</td>
+                                <td>Enterprise responsive theme with dark navy sidebar (<code>#0f172a</code>) and slate background (<code>#f8fafc</code>).</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Report Generation</td>
+                                <td>OpenPyXL 3.1, Pandas CSV</td>
+                                <td>Multi-tab styled Excel workbooks with custom navy fills, currency number formats, and dynamic CSV streaming.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Relational Schema & ERD -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-database">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-hdd-stack text-primary me-2"></i>Normalized Relational Schema (3NF)</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-secondary small">
+                    The database is structured in Third Normal Form (3NF) to eliminate data redundancy and preserve integrity across transactions, line items, products, customers, and commercial regions.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="border rounded-3 p-3 bg-light">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-table me-2 text-primary"></i>orders (Header Table)</h6>
+                            <ul class="list-unstyled small text-muted font-monospace mb-0">
+                                <li><strong>order_id</strong> (INT, PK, Auto-Inc)</li>
+                                <li>order_number (VARCHAR 60, Unique, Index)</li>
+                                <li>customer_id (INT, FK -> customers)</li>
+                                <li>region_id (INT, FK -> regions)</li>
+                                <li>order_date (DATE, Index)</li>
+                                <li>payment_method (VARCHAR 50, Index)</li>
+                                <li>order_status (VARCHAR 50, Index)</li>
+                                <li>total_amount (DECIMAL 12,2)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded-3 p-3 bg-light">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-table me-2 text-teal"></i>order_items (Line-Item Table)</h6>
+                            <ul class="list-unstyled small text-muted font-monospace mb-0">
+                                <li><strong>order_item_id</strong> (INT, PK, Auto-Inc)</li>
+                                <li>order_id (INT, FK -> orders, Cascade)</li>
+                                <li>product_id (INT, FK -> products, Index)</li>
+                                <li>quantity (INT, Check > 0)</li>
+                                <li>unit_price (DECIMAL 10,2)</li>
+                                <li>discount_rate (DECIMAL 5,4)</li>
+                                <li>total_price (DECIMAL 12,2)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded-3 p-3 bg-light">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-table me-2 text-success"></i>products</h6>
+                            <ul class="list-unstyled small text-muted font-monospace mb-0">
+                                <li><strong>product_id</strong> (INT, PK)</li>
+                                <li>product_code (VARCHAR 50, Unique)</li>
+                                <li>product_name (VARCHAR 150)</li>
+                                <li>category_id (INT, FK -> categories)</li>
+                                <li>unit_price (DECIMAL 10,2)</li>
+                                <li>cost_price (DECIMAL 10,2)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded-3 p-3 bg-light">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-table me-2 text-warning"></i>customers</h6>
+                            <ul class="list-unstyled small text-muted font-monospace mb-0">
+                                <li><strong>customer_id</strong> (INT, PK)</li>
+                                <li>customer_code (VARCHAR 50, Unique)</li>
+                                <li>first_name, last_name (VARCHAR 100)</li>
+                                <li>email (VARCHAR 150)</li>
+                                <li>segment (VARCHAR 50, Index)</li>
+                                <li>city, country (VARCHAR 100)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded-3 p-3 bg-light">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-table me-2 text-info"></i>regions & categories</h6>
+                            <ul class="list-unstyled small text-muted font-monospace mb-0">
+                                <li><strong>region_id</strong> (INT, PK)</li>
+                                <li>region_name (VARCHAR 100, Unique)</li>
+                                <li><strong>category_id</strong> (INT, PK)</li>
+                                <li>category_name (VARCHAR 100, Unique)</li>
+                                <li>description (VARCHAR 255)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. KPI Mathematical Formulations -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-kpi">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-calculator text-primary me-2"></i>Executive KPI Mathematical Formulations</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-custom">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>KPI Metric</th>
+                                <th>Mathematical Formula</th>
+                                <th>Safe Boundary & Zero Division Handling</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-bold">Total Revenue</td>
+                                <td><code>&sum; (Order_Items.total_price)</code> where status &isin; ('Completed', 'Shipped')</td>
+                                <td>Coalesced to <code>0.00</code> via <code>COALESCE(SUM(...), 0.0)</code></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Total Orders</td>
+                                <td><code>COUNT(DISTINCT orders.order_id)</code></td>
+                                <td>Evaluates to <code>0</code> if zero records match filter.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Average Order Value (AOV)</td>
+                                <td><code>Total Revenue / Total Orders</code></td>
+                                <td>If <code>Total Orders == 0</code>, returns <code>0.00</code> to prevent division-by-zero errors.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">YoY Growth %</td>
+                                <td><code>((Rev_Current - Rev_Prior) / Rev_Prior) &times; 100</code></td>
+                                <td>If <code>Rev_Prior == 0</code> and <code>Rev_Current > 0</code>, yields <code>+100.0%</code> baseline growth. If both are 0, yields <code>0.0%</code>.</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Revenue Share %</td>
+                                <td><code>(Category_Rev / &sum; All_Category_Rev) &times; 100</code></td>
+                                <td>Window function <code>SUM(revenue) OVER ()</code> safely returns 0% when empty.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Customer Segmentation Logic -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-segmentation">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-people text-primary me-2"></i>Customer Segmentation Rules</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-secondary small">
+                    Customer tiering is dynamically calculated based on realized spending during the evaluated analytical period:
+                </p>
+                <div class="list-group">
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-primary">High Spending (VIP Tier)</h6>
+                            <span class="badge bg-primary">Lifetime Spend &ge; $5,000.00</span>
+                        </div>
+                        <p class="mb-1 small text-muted">Represents enterprise corporate buyers and high-frequency repeat clients. Highest priority for account management and personalized retention.</p>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-teal">Medium Spending (Core Spender)</h6>
+                            <span class="badge bg-teal text-white">Spend Between $1,500.00 and $4,999.99</span>
+                        </div>
+                        <p class="mb-1 small text-muted">Core loyal consumers who order regularly throughout the year. High conversion candidate for volume discounts.</p>
+                    </div>
+                    <div class="list-group-item py-3">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 fw-bold text-warning">Low Spending (Casual / Introductory)</h6>
+                            <span class="badge bg-secondary">Spend &lt; $1,500.00</span>
+                        </div>
+                        <p class="mb-1 small text-muted">One-off or introductory buyers. Re-engagement and nurture target via email automation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Data Quality & Cleaning -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-cleaning">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-funnel text-primary me-2"></i>Data Quality & Cleaning Pipeline</h5>
+            </div>
+            <div class="card-body p-4">
+                <ol class="list-group list-group-numbered border-0">
+                    <li class="list-group-item border-0 px-0 pb-2">
+                        <strong>Header Normalization:</strong> Fuzzy matches column headers to target schema (e.g. <code>order_id</code>, <code>invoice_no</code>, <code>transaction_id</code> &rarr; <code>order_number</code>).
+                    </li>
+                    <li class="list-group-item border-0 px-0 pb-2">
+                        <strong>Deduplication Audit:</strong> Evaluates duplicate transaction combinations. Flags and deduplicates identical lines while keeping an audit count.
+                    </li>
+                    <li class="list-group-item border-0 px-0 pb-2">
+                        <strong>Date Standardization:</strong> Uses Pandas coercion to convert diverse dates (e.g. <code>MM/DD/YYYY</code>, <code>DD/MM/YYYY</code>, ISO strings) to standard <code>YYYY-MM-DD</code>. Unparseable dates are logged to the rejection table.
+                    </li>
+                    <li class="list-group-item border-0 px-0 pb-2">
+                        <strong>Numerical Bounds Checking:</strong> Enforces <code>quantity > 0</code>, <code>unit_price > 0</code>, and scales percent discounts. Invalid numerical values trigger row rejection with clear audit reasons.
+                    </li>
+                    <li class="list-group-item border-0 px-0 pb-2">
+                        <strong>Non-Destructive Review:</strong> Staged data is never committed to database without stakeholder approval via the "Commit Cleaned Records" button.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 7. Advanced SQL Design -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-sql">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-code-slash text-primary me-2"></i>Advanced SQL Analytical Patterns</h5>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-secondary small">
+                    The platform implements enterprise-grade SQL patterns designed to showcase Data Analyst competence:
+                </p>
+                <div class="accordion" id="sqlAccordion">
+                    <div class="accordion-item border-0 mb-2 shadow-sm rounded-3 overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                1. Common Table Expressions (CTEs) & LAG() Window Function
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#sqlAccordion">
+                            <div class="accordion-body bg-light">
+                                <p class="small text-muted mb-2">Calculates time-series trajectories by comparing monthly revenue against the comparable month of the prior calendar year:</p>
+                                <pre class="sql-code mb-0"><code>WITH monthly_sales AS (
+    SELECT
+        SUBSTR(o.order_date, 1, 7) AS year_month,
+        ROUND(SUM(oi.total_price), 2) AS current_revenue
+    FROM orders o JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY SUBSTR(o.order_date, 1, 7)
+)
+SELECT
+    year_month,
+    current_revenue,
+    LAG(current_revenue, 12) OVER (ORDER BY year_month ASC) AS prior_year_revenue,
+    ROUND(((current_revenue - LAG(current_revenue, 12) OVER (ORDER BY year_month ASC)) 
+           / LAG(current_revenue, 12) OVER (ORDER BY year_month ASC)) * 100.0, 2) AS yoy_pct
+FROM monthly_sales;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 mb-2 shadow-sm rounded-3 overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                2. DENSE_RANK() & Window Cumulative Aggregation
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#sqlAccordion">
+                            <div class="accordion-body bg-light">
+                                <p class="small text-muted mb-2">Ranks commercial territories without gaps in ranking sequence while computing percentage contribution to company-wide gross sales:</p>
+                                <pre class="sql-code mb-0"><code>WITH regional_totals AS (
+    SELECT r.region_name, SUM(oi.total_price) AS territory_revenue
+    FROM regions r JOIN orders o ON r.region_id = o.region_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    GROUP BY r.region_name
+)
+SELECT
+    DENSE_RANK() OVER (ORDER BY territory_revenue DESC) AS sales_rank,
+    region_name,
+    territory_revenue,
+    ROUND((territory_revenue * 100.0) / SUM(territory_revenue) OVER (), 2) AS global_share_pct
+FROM regional_totals;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. REST API Reference -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-api">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-hdd-network text-primary me-2"></i>REST API Endpoints Reference</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="table-responsive">
+                    <table class="table table-custom table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Endpoint URI</th>
+                                <th>Description</th>
+                                <th>Parameters</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/kpis</td>
+                                <td>Computes 8 core business KPIs with YoY comparisons</td>
+                                <td><code>start_date</code>, <code>end_date</code>, <code>region_id</code>, <code>category_id</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/sales-trend</td>
+                                <td>Returns monthly revenue, order counts, and AOV</td>
+                                <td><code>start_date</code>, <code>end_date</code>, <code>region_id</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/yoy-comparison</td>
+                                <td>Returns multi-year monthly comparison matrix</td>
+                                <td><code>region_id</code>, <code>category_id</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/top-products</td>
+                                <td>Ranked product list with revenue and units</td>
+                                <td><code>limit</code> (default: 10), filters</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/region-performance</td>
+                                <td>Ranked commercial regions with share %</td>
+                                <td>Analytical filters</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/dashboard/customer-segments</td>
+                                <td>Customer tier breakdown & top 10 LTV clients</td>
+                                <td>Analytical filters</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">POST</span></td>
+                                <td class="font-monospace">/api/data/upload</td>
+                                <td>Accepts CSV/Excel, executes cleaning, stages data</td>
+                                <td>Multipart file payload</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">POST</span></td>
+                                <td class="font-monospace">/api/data/commit</td>
+                                <td>Commits staged cleaned records to database</td>
+                                <td><code>{"stage_id": "..."}</code></td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">GET</span></td>
+                                <td class="font-monospace">/api/reports/export</td>
+                                <td>Streams filtered CSV or formatted Excel report</td>
+                                <td><code>format=excel|csv</code>, filters</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. Setup & Local Execution Guide -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4" id="doc-setup">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-terminal text-primary me-2"></i>Setup & Execution Instructions</h5>
+            </div>
+            <div class="card-body p-4">
+                <h6 class="fw-bold">1. Quick Local Execution (Zero-Setup Demo Mode)</h6>
+                <p class="text-secondary small">Runs immediately out-of-the-box using the bundled SQLite 3.25+ engine:</p>
+                <pre class="sql-code"><code># Install dependencies
+pip install -r requirements.txt
+
+# Run the Flask application
+python run.py</code></pre>
+                <p class="small text-muted">Visit <a href="http://127.0.0.1:5000" target="_blank">http://127.0.0.1:5000</a> in your web browser.</p>
+
+                <h6 class="fw-bold mt-4">2. Connecting to MySQL 8.0 (Production Mode)</h6>
+                <p class="text-secondary small">To connect to an active MySQL database instance, update <code>.env</code>:</p>
+                <pre class="sql-code"><code>DB_ENGINE=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=sales_analytics_db</code></pre>
+                <p class="text-secondary small">Create the database and initialize the schema:</p>
+                <pre class="sql-code"><code>mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS sales_analytics_db;"
+python scripts/init_db.py</code></pre>
+
+                <h6 class="fw-bold mt-4">3. Generating 50,000+ Synthetic Transactions</h6>
+                <pre class="sql-code"><code>python scripts/generate_dataset.py --count 50000</code></pre>
+
+                <h6 class="fw-bold mt-4">4. Running Automated Tests</h6>
+                <pre class="sql-code"><code>pytest tests/ -v</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Interactive Filter Bar -->
+{% include "components/filter_bar.html" %}
+
+<!-- KPI Quick Ribbon -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="kpi-card" data-kpi="best-product">
+            <div class="kpi-header"><span class="kpi-title">Top Revenue Generator</span><div class="kpi-icon icon-blue"><i class="bi bi-star-fill"></i></div></div>
+            <div class="kpi-value fs-5 text-truncate" id="kpi-best-product">Loading...</div>
+            <div class="kpi-subtext text-muted"><span class="text-primary fw-semibold" id="kpi-best-product-rev">$0.00</span> in revenue</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-teal">
+            <div class="kpi-header"><span class="kpi-title">Total Units Sold</span><div class="kpi-icon icon-teal"><i class="bi bi-box-seam"></i></div></div>
+            <div class="kpi-value" id="kpi-units">0</div>
+            <div class="kpi-subtext text-muted">Across all product lines</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-emerald">
+            <div class="kpi-header"><span class="kpi-title">Gross Realized Sales</span><div class="kpi-icon icon-green"><i class="bi bi-currency-dollar"></i></div></div>
+            <div class="kpi-value" id="kpi-revenue">$0.00</div>
+            <div class="kpi-subtext text-muted">Filtered catalog revenue</div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Charts -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-7">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-trophy text-warning"></i> Top 10 Products by Realized Revenue</h3>
+                    <div class="chart-subtitle">Ranked product catalog performance</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-top-products"></div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-pie-chart text-teal"></i> Category Revenue Contribution</h3>
+                    <div class="chart-subtitle">Share of sales across major departments</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-category-donut"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Performance Table Card -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-3x3-gap text-primary me-2"></i>Product Category Breakdown</h5>
+        <small class="text-muted">Aggregated performance metrics across each product category</small>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0" id="table-category-performance">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th class="text-center">Order Occurrences</th>
+                    <th class="text-center">Units Sold</th>
+                    <th class="text-end">Avg Item Price</th>
+                    <th class="text-end">Total Revenue</th>
+                    <th class="text-end">Revenue Share</th>
+                </tr>
+            </thead>
+            <tbody id="table-category-body">
+                <tr><td colspan="6" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading category breakdown...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadCategoryTable();
+        window.addEventListener("dashboard:filtersChanged", loadCategoryTable);
+    });
+
+    function loadCategoryTable() {
+        const queryStr = window.FilterEngine ? window.FilterEngine.getQueryString() : "";
+        fetch(`/api/dashboard/category-performance?${queryStr}`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    const tbody = document.getElementById("table-category-body");
+                    const fmtCur = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+                    const fmtNum = new Intl.NumberFormat("en-US");
+
+                    if (!tbody) return;
+                    tbody.innerHTML = res.data.map(c => `
+                        <tr>
+                            <td class="fw-bold text-dark"><i class="bi bi-folder2 text-primary me-2"></i>${c.category_name}</td>
+                            <td class="text-center font-monospace">${fmtNum.format(c.orders_count)}</td>
+                            <td class="text-center font-monospace">${fmtNum.format(c.units_sold)}</td>
+                            <td class="text-end font-monospace text-muted">${fmtCur.format(c.avg_item_price)}</td>
+                            <td class="text-end font-monospace fw-bold text-primary">${fmtCur.format(c.total_revenue)}</td>
+                            <td class="text-end">
+                                <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <span class="small fw-semibold">${c.share_pct}%</span>
+                                    <div class="progress" style="width: 60px; height: 6px;">
+                                        <div class="progress-bar bg-teal" role="progressbar" style="width: ${c.share_pct}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join("");
+                }
+            });
+    }
+</script>
+{% endblock %}

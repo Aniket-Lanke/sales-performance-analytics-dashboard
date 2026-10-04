@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Live Database Records Status Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-title">Database Orders</span><div class="kpi-icon icon-blue"><i class="bi bi-database"></i></div></div>
+            <div class="kpi-value" id="status-orders-count">0</div>
+            <div class="kpi-subtext text-muted">Committed order headers</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-teal">
+            <div class="kpi-header"><span class="kpi-title">Order Line Items</span><div class="kpi-icon icon-teal"><i class="bi bi-list-check"></i></div></div>
+            <div class="kpi-value" id="status-items-count">0</div>
+            <div class="kpi-subtext text-muted">Granular line transactions</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-emerald">
+            <div class="kpi-header"><span class="kpi-title">Customer Accounts</span><div class="kpi-icon icon-green"><i class="bi bi-people"></i></div></div>
+            <div class="kpi-value" id="status-customers-count">0</div>
+            <div class="kpi-subtext text-muted">Unique profiles in schema</div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-amber">
+            <div class="kpi-header"><span class="kpi-title">Active Database Engine</span><div class="kpi-icon icon-amber"><i class="bi bi-hdd-network"></i></div></div>
+            <div class="kpi-value fs-5 text-truncate" id="status-engine-name">{{ db_status.engine_type }}</div>
+            <div class="kpi-subtext text-muted">Zero-config relational storage</div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload & Generator Row -->
+<div class="row g-4 mb-4">
+    <!-- File Upload Section -->
+    <div class="col-xl-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100 position-relative">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-cloud-arrow-up-fill text-primary me-2"></i>Upload Dataset (CSV or Excel)</h5>
+                <small class="text-muted">Drag and drop sales spreadsheets for automated cleaning, validation, and schema inspection</small>
+            </div>
+            <div class="card-body p-4">
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div id="upload-drop-area" class="border border-2 border-dashed rounded-4 p-5 text-center cursor-pointer transition">
+                        <i class="bi bi-file-earmark-spreadsheet-fill text-primary display-4 mb-3"></i>
+                        <h5 class="fw-bold">Drag and drop your transaction file here</h5>
+                        <p class="text-muted small mb-3">Supports CSV, XLSX, XLS files up to 32MB</p>
+                        <label for="file-input" class="btn btn-primary px-4 py-2">
+                            <i class="bi bi-folder2-open me-2"></i>Browse Computer
+                        </label>
+                        <input type="file" id="file-input" name="file" accept=".csv,.xlsx,.xls" class="d-none">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Upload Spinner Overlay -->
+            <div id="upload-spinner-overlay" class="loading-spinner-overlay d-none">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                <h6 class="fw-bold text-dark" id="upload-spinner-text">Inspecting and cleaning dataset...</h6>
+                <small class="text-muted">Deduplicating rows, parsing dates, and checking numerical bounds</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Synthetic Dataset Generator (50,000+ Records Benchmark) -->
+    <div class="col-xl-5">
+        <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-magic text-teal me-2"></i>Synthetic 50,000+ Record Generator</h5>
+                <small class="text-muted">One-click enterprise benchmarking dataset</small>
+            </div>
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="alert alert-info py-2 px-3 small border-0 mb-3">
+                        <i class="bi bi-info-circle-fill me-1"></i>Generates realistic commercial data across 5 global regions, 6 categories, 35 products, seasonal spikes (Black Friday, Holiday Q4), and customer spending tiers.
+                    </div>
+                    
+                    <label class="form-label small fw-bold text-muted text-uppercase">Record Generation Volume</label>
+                    <select class="form-select mb-3" id="synthetic-count-select">
+                        <option value="50000" selected>50,000 Sales Transactions (Standard Benchmark)</option>
+                        <option value="10000">10,000 Sales Transactions (Fast Demo)</option>
+                        <option value="75000">75,000 Sales Transactions (Stress Test)</option>
+                    </select>
+
+                    <ul class="list-unstyled small text-muted mb-4">
+                        <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Includes realistic timestamps (2023 - 2026)</li>
+                        <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Calculates unit costs, prices, and discounts</li>
+                        <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Seeds SQLite/MySQL and saves to CSV</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-teal w-100 py-2 fw-semibold text-white" id="btn-generate-synthetic" style="background-color: #0d9488;">
+                    <i class="bi bi-magic me-2"></i>Generate Synthetic Records
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Quality Audit Report Card (Hidden until file is inspected) -->
+<div class="card border-0 shadow-sm rounded-4 mb-4 d-none" id="data-quality-report-card">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-shield-check text-success me-2"></i>Data Quality & Validation Audit Report</h5>
+            <small class="text-muted">Review before-and-after cleaning statistics before committing to database</small>
+        </div>
+        <div>
+            <button class="btn btn-success px-4 py-2 fw-semibold" id="btn-commit-data">
+                <i class="bi bi-database-check me-2"></i>Commit Cleaned Records to Database
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <!-- Quality Stats Row -->
+        <div class="row g-3 mb-4 text-center">
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Total Rows</small>
+                    <div class="fs-4 fw-bold text-dark" id="stat-total-rows">0</div>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Valid Records</small>
+                    <div class="fs-4 fw-bold text-primary" id="stat-valid-rows">0</div>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Duplicates Flagged</small>
+                    <div class="fs-4 fw-bold text-warning" id="stat-duplicate-rows">0</div>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Missing Handled</small>
+                    <div class="fs-4 fw-bold text-info" id="stat-missing-handled">0</div>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Rejected Rows</small>
+                    <div class="fs-4 fw-bold text-danger" id="stat-rejected-rows">0</div>
+                </div>
+            </div>
+            <div class="col-md-2 col-4">
+                <div class="p-3 bg-light rounded-3">
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">Quality Score</small>
+                    <div class="fs-4 fw-bold text-success" id="stat-quality-score">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cleaning Actions & Rejected Rows -->
+        <div class="row g-4 mb-4">
+            <div class="col-xl-6">
+                <h6 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i>Automated Cleaning Audit Trail</h6>
+                <ul class="list-group list-group-flush border rounded-3" id="audit-actions-list" style="max-height: 250px; overflow-y: auto;">
+                </ul>
+            </div>
+            <div class="col-xl-6" id="rejected-records-container">
+                <h6 class="fw-bold mb-3 text-danger"><i class="bi bi-exclamation-octagon text-danger me-2"></i>Rejected Records (Not Committed)</h6>
+                <div class="table-responsive border rounded-3" style="max-height: 250px; overflow-y: auto;">
+                    <table class="table table-sm table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Row</th>
+                                <th>Order Ref</th>
+                                <th>Reason For Rejection</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-rejected-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cleaned Data Sample Preview -->
+        <h6 class="fw-bold mb-3"><i class="bi bi-eye text-teal me-2"></i>Cleaned Dataset Sample (First 15 Valid Records)</h6>
+        <div class="table-responsive border rounded-3">
+            <table class="table table-sm table-custom table-hover mb-0">
+                <thead id="table-preview-head"></thead>
+                <tbody id="table-preview-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Past Imports History -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-secondary me-2"></i>Recent Data Import & Cleaning Logs</h5>
+        <small class="text-muted">Audit trail of all previous data ingestion runs</small>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Source Filename</th>
+                    <th>Type</th>
+                    <th class="text-center">Valid / Total</th>
+                    <th class="text-center">Quality Score</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="table-import-history-body">
+                <tr><td colspan="6" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading import audit logs...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/data_import.js') }}"></script>
+{% endblock %}

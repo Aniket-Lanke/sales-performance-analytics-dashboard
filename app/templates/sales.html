@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Interactive Filter Bar -->
+{% include "components/filter_bar.html" %}
+
+<!-- KPI Quick Ribbon -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="kpi-card" data-kpi="revenue">
+            <div class="kpi-header"><span class="kpi-title">Gross Revenue</span><div class="kpi-icon icon-blue"><i class="bi bi-cash-stack"></i></div></div>
+            <div class="kpi-value" id="kpi-revenue">$0.00</div>
+            <div class="kpi-subtext"><span class="badge-growth-pos" id="kpi-growth">+0.0%</span><span class="text-muted ms-1">growth</span></div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="kpi-card kpi-teal" data-kpi="orders">
+            <div class="kpi-header"><span class="kpi-title">Order Volume</span><div class="kpi-icon icon-teal"><i class="bi bi-cart3"></i></div></div>
+            <div class="kpi-value" id="kpi-orders">0</div>
+            <div class="kpi-subtext text-muted">Transactions count</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="kpi-card kpi-emerald" data-kpi="aov">
+            <div class="kpi-header"><span class="kpi-title">Average Order Value</span><div class="kpi-icon icon-green"><i class="bi bi-receipt"></i></div></div>
+            <div class="kpi-value" id="kpi-aov">$0.00</div>
+            <div class="kpi-subtext text-muted">Revenue per order</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="kpi-card kpi-amber" data-kpi="units">
+            <div class="kpi-header"><span class="kpi-title">Total Units</span><div class="kpi-icon icon-amber"><i class="bi bi-boxes"></i></div></div>
+            <div class="kpi-value" id="kpi-units">0</div>
+            <div class="kpi-subtext text-muted">Items fulfilled</div>
+        </div>
+    </div>
+</div>
+
+<!-- Year-over-Year Trajectory & Monthly Revenue Trend -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-7">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-calendar2-range text-primary"></i> Year-over-Year (YoY) Revenue Trajectory</h3>
+                    <div class="chart-subtitle">Monthly trajectory comparing calendar years (FY 2023 - 2026)</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-yoy-comparison"></div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-credit-card-2-front text-teal"></i> Sales by Payment Channel</h3>
+                    <div class="chart-subtitle">Revenue distribution across payment methods</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-payment-methods"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-graph-up-arrow text-primary"></i> Monthly Sales & Revenue Trend</h3>
+                    <div class="chart-subtitle">Historical volume and revenue trends across active filters</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-sales-trend"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card border-0 shadow-sm rounded-4 mb-4" id="orders-table-container">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt-cutoff text-primary me-2"></i>Sales Order Ledger</h5>
+            <small class="text-muted">Live query ledger filtered by date range and category</small>
+        </div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2" id="orders-count-badge">
+            0 Transactions
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Region</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th class="text-center">Items</th>
+                    <th class="text-end">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody id="orders-table-body">
+                <tr><td colspan="8" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading transactions...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer bg-white py-3 border-top d-flex justify-content-between align-items-center">
+        <small class="text-muted">Paginated ledger</small>
+        <div id="orders-pagination"></div>
+    </div>
+</div>
+{% endblock %}

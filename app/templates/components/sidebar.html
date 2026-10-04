@@ -1,0 +1,79 @@
+<aside id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <i class="bi bi-graph-up"></i>
+        </div>
+        <div class="brand-text">
+            <h1>SalesPulse</h1>
+            <span>Analytics Pro</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-title">Core Dashboards</div>
+        
+        <a href="{{ url_for('main.overview') }}" class="nav-link {% if active_page == 'overview' %}active{% endif %}">
+            <i class="bi bi-speedometer2"></i>
+            <span>Overview Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('main.sales') }}" class="nav-link {% if active_page == 'sales' %}active{% endif %}">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>Sales Analysis</span>
+        </a>
+
+        <a href="{{ url_for('main.products') }}" class="nav-link {% if active_page == 'products' %}active{% endif %}">
+            <i class="bi bi-box-seam"></i>
+            <span>Product Performance</span>
+        </a>
+
+        <a href="{{ url_for('main.regional') }}" class="nav-link {% if active_page == 'regional' %}active{% endif %}">
+            <i class="bi bi-globe-americas"></i>
+            <span>Regional Analysis</span>
+        </a>
+
+        <a href="{{ url_for('main.customers') }}" class="nav-link {% if active_page == 'customers' %}active{% endif %}">
+            <i class="bi bi-people"></i>
+            <span>Customer Segmentation</span>
+        </a>
+
+        <div class="nav-section-title">Data & Engineering</div>
+
+        <a href="{{ url_for('main.data_import') }}" class="nav-link {% if active_page == 'data_import' %}active{% endif %}">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <span>Data Import & Quality</span>
+        </a>
+
+        <a href="{{ url_for('main.sql_analytics') }}" class="nav-link {% if active_page == 'sql_analytics' %}active{% endif %}">
+            <i class="bi bi-database-gear"></i>
+            <span>SQL Analytics</span>
+        </a>
+
+        <a href="{{ url_for('main.reports') }}" class="nav-link {% if active_page == 'reports' %}active{% endif %}">
+            <i class="bi bi-file-earmark-spreadsheet"></i>
+            <span>Reports & Export</span>
+        </a>
+
+        <div class="nav-section-title">Reference</div>
+
+        <a href="{{ url_for('main.documentation') }}" class="nav-link {% if active_page == 'documentation' %}active{% endif %}">
+            <i class="bi bi-book"></i>
+            <span>Documentation</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="d-flex align-items-center justify-content-between text-muted small">
+            <div>
+                <span class="d-block text-white-50" style="font-size: 0.72rem;">Database Engine</span>
+                <span class="badge {% if 'MySQL' in db_status.engine_type %}bg-success{% else %}bg-info text-dark{% endif %} p-1 px-2" style="font-size: 0.7rem;">
+                    <i class="bi bi-circle-fill me-1" style="font-size: 0.45rem;"></i>{{ db_status.engine_type }}
+                </span>
+            </div>
+            <div class="text-end">
+                <span class="d-block text-white-50" style="font-size: 0.72rem;">Orders Loaded</span>
+                <span class="text-white fw-bold" style="font-size: 0.78rem;">{{ "{:,}".format(db_status.table_counts.orders or 0) }}</span>
+            </div>
+        </div>
+    </div>
+</aside>

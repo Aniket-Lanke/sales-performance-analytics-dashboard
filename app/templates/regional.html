@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Interactive Filter Bar -->
+{% include "components/filter_bar.html" %}
+
+<!-- KPI Quick Ribbon -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="kpi-card" data-kpi="top-region">
+            <div class="kpi-header"><span class="kpi-title">Leading Territory</span><div class="kpi-icon icon-blue"><i class="bi bi-geo-alt-fill"></i></div></div>
+            <div class="kpi-value fs-5 text-truncate" id="kpi-top-region">Loading...</div>
+            <div class="kpi-subtext text-muted"><span class="text-success fw-semibold" id="kpi-top-region-rev">$0.00</span> in revenue</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-teal">
+            <div class="kpi-header"><span class="kpi-title">Global Markets</span><div class="kpi-icon icon-teal"><i class="bi bi-globe2"></i></div></div>
+            <div class="kpi-value">5 Regions</div>
+            <div class="kpi-subtext text-muted">NA, EU, APAC, LATAM, MEA</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-emerald">
+            <div class="kpi-header"><span class="kpi-title">Territory Revenue</span><div class="kpi-icon icon-green"><i class="bi bi-cash-coin"></i></div></div>
+            <div class="kpi-value" id="kpi-revenue">$0.00</div>
+            <div class="kpi-subtext text-muted">Total across selected filters</div>
+        </div>
+    </div>
+</div>
+
+<!-- Regional Chart -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-bar-chart-steps text-primary"></i> Regional Sales & Market Share Distribution</h3>
+                    <div class="chart-subtitle">Revenue volume comparison across all global commercial markets</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-region-bar"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Regional Table with DENSE_RANK() -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white py-3 border-bottom">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-trophy-fill text-warning me-2"></i>Regional Territory Rankings & Performance</h5>
+        <small class="text-muted">Calculated using database window ranking functions (DENSE_RANK) and regional aggregates</small>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0" id="table-region-rankings">
+            <thead>
+                <tr>
+                    <th class="text-center">Sales Rank</th>
+                    <th>Region Name</th>
+                    <th>Territory Code</th>
+                    <th>Primary Hub</th>
+                    <th class="text-center">Orders Count</th>
+                    <th class="text-center">Units Sold</th>
+                    <th class="text-end">AOV</th>
+                    <th class="text-end">Total Revenue</th>
+                    <th class="text-end">Global Market Share</th>
+                </tr>
+            </thead>
+            <tbody id="table-region-body">
+                <tr><td colspan="9" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading regional metrics...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadRegionalTable();
+        window.addEventListener("dashboard:filtersChanged", loadRegionalTable);
+    });
+
+    function loadRegionalTable() {
+        const queryStr = window.FilterEngine ? window.FilterEngine.getQueryString() : "";
+        fetch(`/api/dashboard/region-performance?${queryStr}`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    const tbody = document.getElementById("table-region-body");
+                    const fmtCur = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+                    const fmtNum = new Intl.NumberFormat("en-US");
+
+                    if (!tbody) return;
+                    tbody.innerHTML = res.data.map(r => `
+                        <tr>
+                            <td class="text-center">
+                                <span class="badge ${r.rank === 1 ? 'bg-warning text-dark' : (r.rank === 2 ? 'bg-secondary text-white' : 'bg-light text-dark border')} font-monospace fs-6">
+                                    #${r.rank}
+                                </span>
+                            </td>
+                            <td class="fw-bold text-dark"><i class="bi bi-pin-map text-danger me-2"></i>${r.region_name}</td>
+                            <td><span class="badge bg-light text-secondary border font-monospace">${r.region_code || 'N/A'}</span></td>
+                            <td>${r.country}</td>
+                            <td class="text-center font-monospace">${fmtNum.format(r.total_orders)}</td>
+                            <td class="text-center font-monospace">${fmtNum.format(r.units_sold)}</td>
+                            <td class="text-end font-monospace text-muted">${fmtCur.format(r.aov)}</td>
+                            <td class="text-end font-monospace fw-bold text-primary">${fmtCur.format(r.total_revenue)}</td>
+                            <td class="text-end">
+                                <div class="d-flex align-items-center justify-content-end gap-2">
+                                    <span class="small fw-semibold">${r.share_pct}%</span>
+                                    <div class="progress" style="width: 60px; height: 6px;">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: ${r.share_pct}%"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join("");
+                }
+            });
+    }
+</script>
+{% endblock %}

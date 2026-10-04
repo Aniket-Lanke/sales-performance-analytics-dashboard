@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Interactive Filter Bar -->
+{% include "components/filter_bar.html" %}
+
+<!-- Segmentation Definition Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="kpi-card">
+            <div class="kpi-header"><span class="kpi-title text-primary">High Spending (VIP)</span><div class="kpi-icon icon-blue"><i class="bi bi-gem"></i></div></div>
+            <div class="kpi-value text-primary">> $5,000</div>
+            <div class="kpi-subtext text-muted">Enterprise tier high-LTV accounts</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-teal">
+            <div class="kpi-header"><span class="kpi-title text-teal">Medium Spending</span><div class="kpi-icon icon-teal"><i class="bi bi-wallet2"></i></div></div>
+            <div class="kpi-value text-teal">$1,500 - $5,000</div>
+            <div class="kpi-subtext text-muted">Core repeat buyers with strong loyalty</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="kpi-card kpi-amber">
+            <div class="kpi-header"><span class="kpi-title text-warning">Low Spending</span><div class="kpi-icon icon-amber"><i class="bi bi-person"></i></div></div>
+            <div class="kpi-value text-warning">< $1,500</div>
+            <div class="kpi-subtext text-muted">Occasional or introductory consumers</div>
+        </div>
+    </div>
+</div>
+
+<!-- Customer Segmentation Visuals -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-5">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-pie-chart-fill text-primary"></i> Customer Spend Distribution</h3>
+                    <div class="chart-subtitle">Account population divided by cumulative revenue tiers</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-customer-segments"></div>
+        </div>
+    </div>
+    <div class="col-xl-7">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-sliders text-teal me-2"></i>Segment Performance Metrics</h5>
+                <small class="text-muted">Aggregated lifetime value and order volume across tiers</small>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-custom table-hover align-middle mb-0" id="table-segments-summary">
+                    <thead>
+                        <tr>
+                            <th>Spending Tier</th>
+                            <th class="text-center">Accounts</th>
+                            <th class="text-center">Total Orders</th>
+                            <th class="text-end">Avg Spend / Client</th>
+                            <th class="text-end">Cumulative Spend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-segments-summary-body">
+                        <tr><td colspan="5" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading segment statistics...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Top High-Value Customers Table -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-trophy-fill text-warning me-2"></i>High-Value Customers Leaderboard (Top 10)</h5>
+            <small class="text-muted">Individual clients ranked by total realized spend in the selected date range</small>
+        </div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+            Top 10 High LTV
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="text-center">#</th>
+                    <th>Customer Code</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th class="text-center">Orders</th>
+                    <th class="text-end">Total Spent</th>
+                    <th class="text-end">Avg Order Value</th>
+                </tr>
+            </thead>
+            <tbody id="table-top-customers-body">
+                <tr><td colspan="8" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading customer leaderboard...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        loadSegmentSummaryTable();
+        window.addEventListener("dashboard:filtersChanged", loadSegmentSummaryTable);
+    });
+
+    function loadSegmentSummaryTable() {
+        const queryStr = window.FilterEngine ? window.FilterEngine.getQueryString() : "";
+        fetch(`/api/dashboard/customer-segments?${queryStr}`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    const tbody = document.getElementById("table-segments-summary-body");
+                    const fmtCur = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+                    const fmtNum = new Intl.NumberFormat("en-US");
+
+                    if (!tbody) return;
+                    tbody.innerHTML = res.data.segments.map(s => `
+                        <tr>
+                            <td class="fw-bold"><span class="badge ${s.segment_name.includes('High') ? 'bg-primary' : (s.segment_name.includes('Medium') ? 'bg-teal text-white' : 'bg-secondary')} p-2">${s.segment_name}</span></td>
+                            <td class="text-center font-monospace">${fmtNum.format(s.customer_count)} (${s.share_pct}%)</td>
+                            <td class="text-center font-monospace">${fmtNum.format(s.total_orders)}</td>
+                            <td class="text-end font-monospace text-muted">${fmtCur.format(s.avg_spend_per_customer)}</td>
+                            <td class="text-end font-monospace fw-bold text-primary">${fmtCur.format(s.total_segment_spend)}</td>
+                        </tr>
+                    `).join("");
+                }
+            });
+    }
+</script>
+{% endblock %}

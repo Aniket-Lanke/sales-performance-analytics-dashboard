@@ -1,0 +1,66 @@
+<div class="filter-bar-card mb-4">
+    <div class="row g-3 align-items-end">
+        <!-- Date Presets & Custom Inputs -->
+        <div class="col-xl-4 col-lg-5 col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="filter-label mb-0"><i class="bi bi-calendar3 me-1"></i>Date Range</span>
+                <div class="d-flex gap-1">
+                    <button type="button" class="date-preset-btn active" data-preset="all">All</button>
+                    <button type="button" class="date-preset-btn" data-preset="ytd">YTD</button>
+                    <button type="button" class="date-preset-btn" data-preset="90d">90D</button>
+                    <button type="button" class="date-preset-btn" data-preset="12m">12M</button>
+                </div>
+            </div>
+            <div class="input-group input-group-sm">
+                <input type="date" class="form-control" id="filter-start-date" value="{{ filter_options.min_date }}" title="Start Date">
+                <span class="input-group-text bg-light text-muted">to</span>
+                <input type="date" class="form-control" id="filter-end-date" value="{{ filter_options.max_date }}" title="End Date">
+            </div>
+        </div>
+
+        <!-- Region Dropdown -->
+        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <label class="filter-label" for="filter-region"><i class="bi bi-geo-alt me-1"></i>Region</label>
+            <select class="form-select form-select-sm" id="filter-region">
+                <option value="all" selected>All Regions</option>
+                {% for reg in filter_options.regions %}
+                <option value="{{ reg.region_id }}">{{ reg.region_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6">
+            <label class="filter-label" for="filter-category"><i class="bi bi-tags me-1"></i>Category</label>
+            <select class="form-select form-select-sm" id="filter-category">
+                <option value="all" selected>All Categories</option>
+                {% for cat in filter_options.categories %}
+                <option value="{{ cat.category_id }}">{{ cat.category_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Payment Method Dropdown -->
+        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <label class="filter-label" for="filter-payment"><i class="bi bi-credit-card me-1"></i>Payment</label>
+            <select class="form-select form-select-sm" id="filter-payment">
+                <option value="all" selected>All Payment Methods</option>
+                {% for pm in filter_options.payment_methods %}
+                <option value="{{ pm }}">{{ pm }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="col-xl-2 col-lg-12 col-md-12 col-sm-6 text-end">
+            <div class="d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary w-50" id="btn-reset-filters" title="Reset all filters">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                </button>
+                <button type="button" class="btn btn-sm btn-primary w-50" id="btn-apply-filters">
+                    <i class="bi bi-funnel-fill"></i> Filter
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

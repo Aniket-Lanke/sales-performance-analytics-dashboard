@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Interactive Filter Bar -->
+{% include "components/filter_bar.html" %}
+
+<!-- KPI Cards Grid (8 Core Business Metrics) -->
+<div class="row g-3 mb-4">
+    <!-- Total Revenue -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card" data-kpi="revenue">
+            <div class="kpi-header">
+                <span class="kpi-title">Total Revenue</span>
+                <div class="kpi-icon icon-blue">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+            </div>
+            <div class="kpi-value" id="kpi-revenue">$0.00</div>
+            <div class="kpi-subtext">
+                <span class="badge-growth-pos" id="kpi-growth">+0.0%</span>
+                <span class="text-muted ms-1">vs prior period</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Orders -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-teal" data-kpi="orders">
+            <div class="kpi-header">
+                <span class="kpi-title">Total Orders</span>
+                <div class="kpi-icon icon-teal">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+            </div>
+            <div class="kpi-value" id="kpi-orders">0</div>
+            <div class="kpi-subtext text-muted">
+                <i class="bi bi-check2-all text-teal me-1"></i>Completed transactions
+            </div>
+        </div>
+    </div>
+
+    <!-- Units Sold -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-emerald" data-kpi="units">
+            <div class="kpi-header">
+                <span class="kpi-title">Units Sold</span>
+                <div class="kpi-icon icon-green">
+                    <i class="bi bi-box"></i>
+                </div>
+            </div>
+            <div class="kpi-value" id="kpi-units">0</div>
+            <div class="kpi-subtext text-muted">
+                <i class="bi bi-arrow-up-right text-success me-1"></i>Gross line volume
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Customers -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-amber" data-kpi="customers">
+            <div class="kpi-header">
+                <span class="kpi-title">Total Customers</span>
+                <div class="kpi-icon icon-amber">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+            <div class="kpi-value" id="kpi-customers">0</div>
+            <div class="kpi-subtext text-muted">
+                <i class="bi bi-person-check text-warning me-1"></i>Active account base
+            </div>
+        </div>
+    </div>
+
+    <!-- Average Order Value (AOV) -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card">
+            <div class="kpi-header">
+                <span class="kpi-title">Avg Order Value (AOV)</span>
+                <div class="kpi-icon icon-purple">
+                    <i class="bi bi-receipt"></i>
+                </div>
+            </div>
+            <div class="kpi-value" id="kpi-aov">$0.00</div>
+            <div class="kpi-subtext text-muted">
+                <span>Revenue / Total Orders</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Best-Selling Product -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-teal">
+            <div class="kpi-header">
+                <span class="kpi-title">Best-Selling Product</span>
+                <div class="kpi-icon icon-teal">
+                    <i class="bi bi-trophy"></i>
+                </div>
+            </div>
+            <div class="kpi-value fs-5 text-truncate" id="kpi-best-product">Loading...</div>
+            <div class="kpi-subtext text-muted">
+                <span class="text-primary fw-semibold" id="kpi-best-product-rev">$0.00</span> in revenue
+            </div>
+        </div>
+    </div>
+
+    <!-- Top-Performing Region -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-emerald">
+            <div class="kpi-header">
+                <span class="kpi-title">Top Performing Region</span>
+                <div class="kpi-icon icon-green">
+                    <i class="bi bi-pin-map"></i>
+                </div>
+            </div>
+            <div class="kpi-value fs-5 text-truncate" id="kpi-top-region">Loading...</div>
+            <div class="kpi-subtext text-muted">
+                <span class="text-success fw-semibold" id="kpi-top-region-rev">$0.00</span> in sales
+            </div>
+        </div>
+    </div>
+
+    <!-- Realized Benchmark -->
+    <div class="col-xl-3 col-md-6">
+        <div class="kpi-card kpi-amber">
+            <div class="kpi-header">
+                <span class="kpi-title">Benchmark Scale</span>
+                <div class="kpi-icon icon-amber">
+                    <i class="bi bi-speedometer"></i>
+                </div>
+            </div>
+            <div class="kpi-value fs-5">50,000+ Records</div>
+            <div class="kpi-subtext text-muted">
+                <span>Enterprise transaction volume</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section 1: Sales Trend & Category Share -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-8 col-lg-7">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-graph-up text-primary"></i> Monthly Sales & Revenue Trend</h3>
+                    <div class="chart-subtitle">Dual-axis view showing total realized revenue and order counts over time</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-sales-trend"></div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-5">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-pie-chart text-teal"></i> Revenue Contribution by Category</h3>
+                    <div class="chart-subtitle">Percentage market share per product category</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-category-donut"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section 2: Regional Performance & Top Products -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-geo-alt-fill text-danger"></i> Sales by Commercial Region</h3>
+                    <div class="chart-subtitle">Territory revenue breakdown and volume rank</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-region-bar"></div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3 class="chart-title"><i class="bi bi-award-fill text-warning"></i> Top Products by Realized Revenue</h3>
+                    <div class="chart-subtitle">Leading merchandise driving revenue</div>
+                </div>
+            </div>
+            <div class="chart-container" id="chart-top-products"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders Table -->
+<div class="card border-0 shadow-sm rounded-4 mb-4" id="orders-table-container">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-table text-primary me-2"></i>Filtered Transaction Records</h5>
+            <small class="text-muted">Displaying verified database transactions reflecting selected filters</small>
+        </div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2" id="orders-count-badge">
+            0 Transactions
+        </span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-custom table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Customer Name</th>
+                    <th>Region</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th class="text-center">Items</th>
+                    <th class="text-end">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody id="orders-table-body">
+                <tr><td colspan="8" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading transactions...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer bg-white py-3 border-top d-flex justify-content-between align-items-center">
+        <small class="text-muted">Paginated enterprise records (15 per page)</small>
+        <div id="orders-pagination"></div>
+    </div>
+</div>
+{% endblock %}
